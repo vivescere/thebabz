@@ -12,11 +12,12 @@ pub fn all() -> AppRouter {
     let serve_static = ServeDir::new("static");
 
     Router::new()
-        .merge(index())
+        .merge(landing())
         .fallback_service(serve_static)
 }
 
-fn index() -> AppRouter {
+/// Routes definitions for the `landing` controller.
+fn landing() -> AppRouter {
     Router::new()
-        .route("/", get(controllers::index::index))
+        .route("/", get(controllers::landing::landing))
 }

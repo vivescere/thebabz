@@ -1,8 +1,9 @@
 use tower_http::trace::TraceLayer;
-use tracing::{event, Level};
+use tracing::Level;
 use tracing_appender::non_blocking::WorkerGuard;
 
 mod state;
+mod errors;
 mod routes;
 mod controllers;
 
@@ -10,7 +11,7 @@ mod controllers;
 async fn main() {
     let _guard = setup_tracing();
 
-    event!(Level::INFO, "Starting application");
+    tracing::info!("Starting application");
 
     let app_state: state::AppState = state::AppState::new();
 
@@ -20,9 +21,11 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8000")
         .await
-        .unwrap();
+        .expect("should be able to listen on the specified port");
 
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app)
+        .await
+        .expect("should be able to serve");
 }
 
 fn setup_tracing() -> WorkerGuard {
